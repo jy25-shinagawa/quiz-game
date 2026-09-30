@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Quiz Arena | Security Lab & Quiz Game</title>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.35);
+      --secondary: #06b6d4;
+      --secondary-glow: rgba(6, 182, 212, 0.35);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.35);
+      --danger: #ef4444;
+      --danger-glow: rgba(239, 68, 68, 0.35);
+      --warning: #f59e0b;
+      --bg: #090d16;
+      --surface: #131b2e;
+      --surface-light: #1e293b;
+      --surface-hover: #27354f;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --border-accent: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg) 75%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Header */
+    header {
+      background: rgba(19, 27, 46, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .header-title h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #818cf8 0%, #38bdf8 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    /* Language Selector Dropdown */
+    .lang-selector-wrapper {
+      display: flex;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 0.25rem 0.6rem;
+      transition: all 0.2s;
+    }
+
+    .lang-selector-wrapper:hover {
+      border-color: #818cf8;
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.25);
+    }
+
+    .lang-icon {
+      font-size: 1rem;
+      margin-right: 0.4rem;
+      user-select: none;
+    }
+
+    .lang-select {
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      padding: 0.25rem 0.2rem;
+    }
+
+    .lang-select option {
+      background: #1e293b;
+      color: #f8fafc;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.92rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .user-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .user-badge strong {
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    .score-badge {
+      background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 0 2px 8px var(--primary-glow);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .score-bump {
+      transform: scale(1.25);
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      padding: 0.3rem 0.75rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover {
+      background: var(--danger);
+      color: white;
+      border-color: var(--danger);
+      box-shadow: 0 2px 10px var(--danger-glow);
+    }
+
+    /* Grid layout */
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 820px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #f1f5f9;
+    }
+
+    /* Tabs */
+    .tab-container {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 0.75rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      color: #38bdf8;
+      border-bottom-color: #38bdf8;
+    }
+
+    /* Form elements */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    input[type="text"], input[type="password"], input[type="number"] {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--border);
+      border-radius: 0.6rem;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
+      color: white;
+      border: none;
+      border-radius: 0.6rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+
+    .btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px var(--primary-glow);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      color: var(--text);
+      box-shadow: none;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--surface-hover);
+      border-color: var(--border-accent);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-sm {
+      width: auto;
+      padding: 0.4rem 0.85rem;
+      font-size: 0.85rem;
+    }
+
+    /* Quiz Option Buttons */
+    .quiz-question-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.2rem;
+      margin-bottom: 1.25rem;
+      min-height: 4.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .quiz-question {
+      font-size: 1.12rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: #f1f5f9;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .option-btn {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 0.85rem 1.15rem;
+      background: rgba(30, 41, 59, 0.75);
+      border: 1.5px solid var(--border);
+      border-radius: 0.75rem;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      overflow: hidden;
+    }
+
+    .option-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: var(--surface-hover);
+      border-color: #818cf8;
+      transform: translateY(-2px) scale(1.008);
+      box-shadow: 0 6px 18px -2px rgba(99, 102, 241, 0.3);
+    }
+
+    .option-btn:hover:not(:disabled)::before {
+      opacity: 1;
+    }
+
+    .option-btn:active:not(:disabled) {
+      transform: scale(0.985);
+    }
+
+    .option-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-accent);
+      border-radius: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-right: 0.85rem;
+      flex-shrink: 0;
+      color: #94a3b8;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover:not(:disabled) .option-label {
+      border-color: #818cf8;
+      color: #e0e7ff;
+      background: rgba(99, 102, 241, 0.3);
+    }
+
+    .option-btn.selected {
+      background: rgba(79, 70, 229, 0.35);
+      border-color: #818cf8;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.45);
+      font-weight: 600;
+      transform: translateY(-1px);
+    }
+
+    .option-btn.selected .option-label {
+      background: #4f46e5;
+      color: white;
+      border-color: #818cf8;
+    }
+
+    .option-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10b981 !important;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.45) !important;
+      color: white !important;
+      animation: pulse-correct 0.6s ease;
+    }
+
+    .option-btn.correct .option-label {
+      background: #10b981 !important;
+      color: white !important;
+      border-color: #34d399 !important;
+    }
+
+    .option-btn.incorrect {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.45) !important;
+      color: white !important;
+      animation: shake-incorrect 0.4s ease;
+    }
+
+    .option-btn.incorrect .option-label {
+      background: #ef4444 !important;
+      color: white !important;
+      border-color: #f87171 !important;
+    }
+
+    @keyframes pulse-correct {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake-incorrect {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-4px); }
+      40%, 80% { transform: translateX(4px); }
+    }
+
+    /* Leaderboard */
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .leaderboard-table th, .leaderboard-table td {
+      padding: 0.8rem 0.85rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+    }
+
+    .leaderboard-table th {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .leaderboard-table tr {
+      transition: background 0.15s;
+    }
+
+    .leaderboard-table tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .rank-col {
+      width: 48px;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .score-col {
+      text-align: right !important;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+
+    /* XSS Toggle & Badge */
+    .xss-control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.82rem;
+    }
+
+    .toggle-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .toggle-switch input {
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast {
+      padding: 0.85rem 1.25rem;
+      border-radius: 0.75rem;
+      font-size: 0.92rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .toast.success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--success);
+      color: #34d399;
+      display: block;
+    }
+
+    .toast.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--danger);
+      color: #f87171;
+      display: block;
+    }
+
+    .toast.info {
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid var(--secondary);
+      color: #67e8f9;
+      display: block;
+    }
+
+    /* Testing Lab Panels */
+    .testing-panel {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px dashed #38bdf8;
+      border-radius: 0.85rem;
+      padding: 1.15rem;
+      margin-top: 1.25rem;
+      font-size: 0.85rem;
+    }
+
+    .testing-panel h4 {
+      color: #38bdf8;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .payload-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.4rem;
+    }
+
+    .chip-btn {
+      background: var(--surface-light);
+      color: #93c5fd;
+      border: 1px solid var(--border-accent);
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.35rem;
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    .chip-btn:hover {
+      background: #334155;
+      color: #e0f2fe;
+      border-color: #38bdf8;
+      transform: translateY(-1px);
+    }
+
+    .leaked-box {
+      font-family: monospace;
+      background: #020617;
+      padding: 0.6rem 0.85rem;
+      border: 1px solid #1e293b;
+      border-radius: 0.5rem;
+      margin: 0.4rem 0;
+      color: #4ade80;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-left">
+        <div class="header-title">
+          <h1 id="uiHeaderTitle">🎯 Cyber Quiz Arena</h1>
+          <p id="uiHeaderSubtitle">Full-Stack Security Lab • Node.js • Express • SQLite</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <!-- Language Selector Dropdown -->
+        <div class="lang-selector-wrapper">
+          <span class="lang-icon">🌐</span>
+          <select id="langSelect" class="lang-select" onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="zh-TW">繁體中文</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="ru">Русский</option>
+          </select>
+        </div>
+
+        <!-- User profile badge -->
+        <div id="userProfile" class="user-profile">
+          <div id="userStatus" class="user-badge">Not logged in</div>
+          <button id="logoutBtn" class="btn-logout" style="display:none;" onclick="handleLogout()">Logout</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Global Notification Banner -->
+    <div id="toast" class="toast"></div>
+
+    <div class="grid-layout">
+      <!-- Left Column: Authentication & Educational Testing -->
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- Auth Card -->
+        <div class="card" id="authCard">
+          <div class="tab-container">
+            <button class="tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</button>
+            <button class="tab-btn" id="tabRegister" onclick="switchAuthTab('register')">Register Account</button>
+          </div>
+
+          <form id="authForm" onsubmit="handleAuthSubmit(event)">
+            <div class="form-group">
+              <label for="authUsername" id="authUsernameLabel">Username</label>
+              <input type="text" id="authUsername" placeholder="e.g. alice or admin" required autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="authPassword" id="authPasswordLabel">Password</label>
+              <input type="password" id="authPassword" placeholder="••••••••" required>
+            </div>
+            <button type="submit" id="authSubmitBtn" class="btn">Sign In</button>
+          </form>
+
+          <!-- Interactive SQLi Test Lab -->
+          <div class="testing-panel" id="sqliHelper">
+            <h4 id="uiSqliTitle">🧪 SQL Injection Payloads (POST /api/login)</h4>
+            <p id="uiSqliDesc" style="color: var(--text-muted); margin-bottom: 0.4rem;">
+              Click payload to test query concatenation bypass:
+            </p>
+            <div class="payload-chips">
+              <span class="chip-btn" onclick="applySqliPayload(`admin' --`, 'anything')">admin' --</span>
+              <span class="chip-btn" onclick="applySqliPayload(`' OR 1=1 --`, 'pass')">' OR 1=1 --</span>
+              <span class="chip-btn" onclick="applySqliPayload(`' OR 'a'='a`, `' OR 'a'='a`)">' OR 'a'='a</span>
+            </div>
+          </div>
+
+          <!-- Stored XSS Registration Test Lab -->
+          <div class="testing-panel" id="xssHelper" style="display: none;">
+            <h4 id="uiXssTitle">🦹 Stored XSS Payloads (Registration Username)</h4>
+            <p id="uiXssDesc" style="color: var(--text-muted); margin-bottom: 0.4rem;">
+              Inject HTML/JS via username to test Stored XSS on Leaderboard:
+            </p>
+            <div class="payload-chips">
+              <span class="chip-btn" onclick="applyXssPayload(`<b style='color:#ef4444'>Hacker_VIP</b>`)">&lt;b style='color:red'&gt;</span>
+              <span class="chip-btn" onclick="applyXssPayload(`<img src=x onerror=alert('Stored_XSS!')>`)">&lt;img onerror=alert()&gt;</span>
+              <span class="chip-btn" onclick="applyXssPayload(`<marquee style='color:#38bdf8'>⚡ pwned</marquee>`)">&lt;marquee&gt;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Educational Testing Guide -->
+        <div class="card">
+          <div class="card-title">
+            <span id="uiEduTitle">🛡️ Educational Testing Lab Guide</span>
+          </div>
+          <div style="font-size: 0.88rem; line-height: 1.65; color: var(--text-muted);">
+            <p id="uiEdu1"><strong style="color: #f1f5f9;">1. SQL Injection (SQLi):</strong> <code>/api/login</code> concatenates raw user strings into SQL without prepared parameters. Use <code>' OR 1=1 --</code> to bypass login.</p>
+            <p id="uiEdu2" style="margin-top: 0.6rem;"><strong style="color: #f1f5f9;">2. Leaked Answer in API:</strong> <code>/api/quiz/next</code> leaks the correct <code>answer</code> in its JSON response payload before the user submits.</p>
+            <p id="uiEdu3" style="margin-top: 0.6rem;"><strong style="color: #f1f5f9;">3. Parameter Tampering:</strong> <code>/api/quiz/submit</code> trusts the client-provided <code>scoreToAdd</code> value, enabling instant high-score manipulation.</p>
+            <p id="uiEdu4" style="margin-top: 0.6rem;"><strong style="color: #f1f5f9;">4. Stored XSS Demo:</strong> Usernames registered with HTML/JS payloads can trigger client-side execution when rendered on the leaderboard in demonstration mode.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Quiz Answering & Leaderboard -->
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- Quiz Challenge Card -->
+        <div class="card" id="quizCard">
+          <div class="card-title">
+            <span id="uiQuizTitle">🧠 Quiz Challenge</span>
+            <button id="uiBtnNext" class="btn btn-secondary btn-sm" onclick="fetchNextQuestion()">Next Question ↻</button>
+          </div>
+
+          <div id="quizContainer">
+            <div class="quiz-question-box">
+              <div class="quiz-question" id="questionText">Loading cyber security challenge...</div>
+            </div>
+            <div class="options-grid" id="optionsContainer"></div>
+
+            <div style="display: flex; gap: 0.75rem; align-items: center; margin-top: 0.5rem;">
+              <button id="submitAnswerBtn" class="btn" onclick="submitSelectedAnswer()" disabled>Submit Answer</button>
+            </div>
+          </div>
+
+          <!-- Parameter Tampering & Answer Leak Lab -->
+          <div class="testing-panel">
+            <h4 id="uiInspectTitle">🔍 Request Inspection & Tampering</h4>
+            <div style="margin-top: 0.35rem;">
+              <label id="uiLeakedLabel">Leaked Server Answer (from <code>/api/quiz/next</code>):</label>
+              <div class="leaked-box" id="leakedAnswer">Fetching question...</div>
+            </div>
+            <div class="form-group" style="margin-top: 0.65rem; margin-bottom: 0;">
+              <label for="customScore" id="uiTamperLabel">Custom <code>scoreToAdd</code> (Client Parameter Tampering):</label>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="number" id="customScore" value="10" style="max-width: 110px;">
+                <button class="btn btn-secondary btn-sm" onclick="tamperScore(100)">+100</button>
+                <button class="btn btn-secondary btn-sm" onclick="tamperScore(500)">+500</button>
+                <button class="btn btn-secondary btn-sm" onclick="tamperScore(9999)">+9999</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leaderboard Card -->
+        <div class="card">
+          <div class="card-title">
+            <span id="uiLeaderboardTitle">🏆 Live Leaderboard</span>
+            <button id="uiBtnRefresh" class="btn btn-secondary btn-sm" onclick="fetchLeaderboard()">Refresh</button>
+          </div>
+
+          <!-- Stored XSS Render Mode Switch -->
+          <div class="xss-control-bar">
+            <span id="uiXssDemoMode">Stored XSS Demo Mode:</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="xssToggle" onchange="fetchLeaderboard()">
+              <span id="xssModeLabel" style="font-weight: 600; color: #10b981;">Escaped (Safe)</span>
+            </label>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th class="rank-col" id="uiThRank">#</th>
+                  <th id="uiThPlayer">Player</th>
+                  <th class="score-col" id="uiThScore">Score</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardBody">
+                <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading rankings...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // i18n Localization Dictionary
+    const i18n = {
+      en: {
+        title: "🎯 Cyber Quiz Arena",
+        subtitle: "Full-Stack Security Lab • Node.js • Express • SQLite",
+        notLoggedIn: "Not signed in (play as guest)",
+        signedIn: "Signed in:",
+        logout: "Logout",
+        pts: "pts",
+        tabLogin: "Sign In",
+        tabRegister: "Register Account",
+        username: "Username",
+        usernameRegister: "Username (Supports XSS testing)",
+        password: "Password",
+        btnSignIn: "Sign In",
+        btnRegister: "Create Account",
+        sqliTitle: "🧪 SQL Injection Payloads (POST /api/login)",
+        sqliDesc: "Click payload to test query concatenation bypass:",
+        xssTitle: "🦹 Stored XSS Payloads (Registration Username)",
+        xssDesc: "Inject HTML/JS via username to test Stored XSS on Leaderboard:",
+        eduTitle: "🛡️ Educational Testing Lab Guide",
+        edu1: '<strong style="color: #f1f5f9;">1. SQL Injection (SQLi):</strong> <code>/api/login</code> concatenates raw user strings into SQL without prepared parameters. Use <code>\' OR 1=1 --</code> to bypass login.',
+        edu2: '<strong style="color: #f1f5f9;">2. Leaked Answer in API:</strong> <code>/api/quiz/next</code> leaks the correct <code>answer</code> in its JSON response payload before the user submits.',
+        edu3: '<strong style="color: #f1f5f9;">3. Parameter Tampering:</strong> <code>/api/quiz/submit</code> trusts the client-provided <code>scoreToAdd</code> value, enabling instant high-score manipulation.',
+        edu4: '<strong style="color: #f1f5f9;">4. Stored XSS Demo:</strong> Usernames registered with HTML/JS payloads can trigger client-side execution when rendered on the leaderboard in demonstration mode.',
+        quizTitle: "🧠 Quiz Challenge",
+        btnNext: "Next Question ↻",
+        btnSubmit: "Submit Answer",
+        inspectTitle: "🔍 Request Inspection & Tampering",
+        leakedLabel: "Leaked Server Answer (from <code>/api/quiz/next</code>):",
+        tamperLabel: "Custom <code>scoreToAdd</code> (Client Parameter Tampering):",
+        leaderboardTitle: "🏆 Live Leaderboard",
+        btnRefresh: "Refresh",
+        xssDemoMode: "Stored XSS Demo Mode:",
+        xssSafe: "Escaped (Safe)",
+        xssVulnerable: "Vulnerable (Raw HTML)",
+        thRank: "#",
+        thPlayer: "Player",
+        thScore: "Score",
+        noPlayers: "No players yet. Register and be the first!",
+        loadingRankings: "Loading rankings...",
+        you: "(You)",
+        loadingQuestion: "Loading cyber security challenge...",
+        answerCorrect: "🎉 Correct!",
+        answerIncorrect: "❌ Incorrect!",
+        loggedOutMsg: "Logged out successfully."
+      },
+      "zh-TW": {
+        title: "🎯 資安競賽測驗擂台",
+        subtitle: "全端資安實戰實驗室 • Node.js • Express • SQLite",
+        notLoggedIn: "尚未登入 (訪客模式)",
+        signedIn: "已登入：",
+        logout: "登出",
+        pts: "分",
+        tabLogin: "登入帳號",
+        tabRegister: "註冊帳號",
+        username: "使用者名稱",
+        usernameRegister: "使用者名稱 (支援 XSS 測試)",
+        password: "密碼",
+        btnSignIn: "立即登入",
+        btnRegister: "建立帳號",
+        sqliTitle: "🧪 SQL 注入測試負載 (POST /api/login)",
+        sqliDesc: "點擊負載以測試查詢字串拼接繞過：",
+        xssTitle: "🦹 儲存型 XSS 測試負載 (註冊使用者名稱)",
+        xssDesc: "透過使用者名稱注入 HTML/JS 以測試排行榜儲存型 XSS：",
+        eduTitle: "🛡️ 資安教學實戰指南",
+        edu1: '<strong style="color: #f1f5f9;">1. SQL 注入 (SQLi)：</strong> <code>/api/login</code> 直接拼接字串進行 SQL 查詢，未採用參數化查詢。可使用 <code>\' OR 1=1 --</code> 繞過登入驗證。',
+        edu2: '<strong style="color: #f1f5f9;">2. API 答案洩漏：</strong> <code>/api/quiz/next</code> 在使用者作答前，直接在 JSON 回應中洩漏正確 <code>answer</code>。',
+        edu3: '<strong style="color: #f1f5f9;">3. 參數篡改：</strong> <code>/api/quiz/submit</code> 直接採信前端傳入的 <code>scoreToAdd</code> 數值，造成分數隨意篡改。',
+        edu4: '<strong style="color: #f1f5f9;">4. 儲存型 XSS 示範：</strong> 註冊含有 HTML/JS 負載的使用者名稱，在排行榜以示範模式渲染時會觸發客戶端腳本執行。',
+        quizTitle: "🧠 資安題目挑戰",
+        btnNext: "下一題 ↻",
+        btnSubmit: "送出答案",
+        inspectTitle: "🔍 請求檢查與參數篡改",
+        leakedLabel: "伺服器洩漏之答案 (來自 <code>/api/quiz/next</code>)：",
+        tamperLabel: "自訂 <code>scoreToAdd</code> (前端參數篡改)：",
+        leaderboardTitle: "🏆 即時排行榜",
+        btnRefresh: "重新整理",
+        xssDemoMode: "儲存型 XSS 示範模式：",
+        xssSafe: "已跳脫 (安全)",
+        xssVulnerable: "存在漏洞 (原始 HTML)",
+        thRank: "#",
+        thPlayer: "玩家",
+        thScore: "分數",
+        noPlayers: "目前尚無玩家。立即註冊成為第一名！",
+        loadingRankings: "排行榜載入中...",
+        you: "(你)",
+        loadingQuestion: "題目載入中...",
+        answerCorrect: "🎉 回答正確！",
+        answerIncorrect: "❌ 回答錯誤！",
+        loggedOutMsg: "已成功登出。"
+      },
+      ja: {
+        title: "🎯 サイバークイズアリーナ",
+        subtitle: "フルスタックセキュリティラボ • Node.js • Express • SQLite",
+        notLoggedIn: "未ログイン (ゲストプレイ)",
+        signedIn: "ログイン中：",
+        logout: "ログアウト",
+        pts: "点",
+        tabLogin: "サインイン",
+        tabRegister: "アカウント登録",
+        username: "ユーザー名",
+        usernameRegister: "ユーザー名 (XSSテスト対応)",
+        password: "パスワード",
+        btnSignIn: "サインイン",
+        btnRegister: "アカウント作成",
+        sqliTitle: "🧪 SQLインジェクション検証 (POST /api/login)",
+        sqliDesc: "ペイロードをクリックしてクエリ連結バイパスをテスト:",
+        xssTitle: "🦹 格納型XSS検証 (登録ユーザー名)",
+        xssDesc: "ユーザー名経由でHTML/JSを挿入しリーダーボードで格納型XSSを検証:",
+        eduTitle: "🛡️ セキュリティ学習ラボガイド",
+        edu1: '<strong style="color: #f1f5f9;">1. SQLインジェクション (SQLi):</strong> <code>/api/login</code> はパラメータ化を行わずユーザー入力を直接SQL文に連結します。<code>\' OR 1=1 --</code> で認証をバイパスできます。',
+        edu2: '<strong style="color: #f1f5f9;">2. API回答漏洩:</strong> <code>/api/quiz/next</code> は回答送信前にJSONレスポンス内に正解 <code>answer</code> を含めて漏洩しています。',
+        edu3: '<strong style="color: #f1f5f9;">3. パラメータ改ざん:</strong> <code>/api/quiz/submit</code> はクライアント指定の <code>scoreToAdd</code> をそのまま信頼するため、スコア不正操作が可能です。',
+        edu4: '<strong style="color: #f1f5f9;">4. 格納型XSSデモ:</strong> HTML/JSを含むユーザー名を登録すると、リーダーボードのデモ表示時にスクリプトが実行されます。',
+        quizTitle: "🧠 クイズチャレンジ",
+        btnNext: "次の問題 ↻",
+        btnSubmit: "回答を送信",
+        inspectTitle: "🔍 リクエスト検査＆改ざん",
+        leakedLabel: "サーバー漏洩回答 (<code>/api/quiz/next</code> より):",
+        tamperLabel: "カスタム <code>scoreToAdd</code> (クライアント改ざん):",
+        leaderboardTitle: "🏆 リアルタイムリーダーボード",
+        btnRefresh: "更新",
+        xssDemoMode: "格納型XSSデモモード:",
+        xssSafe: "エスケープ (安全)",
+        xssVulnerable: "脆弱 (生HTML)",
+        thRank: "#",
+        thPlayer: "プレイヤー",
+        thScore: "スコア",
+        noPlayers: "プレイヤーがいません。登録して最初の一人になろう！",
+        loadingRankings: "ランキング読み込み中...",
+        you: "(あなた)",
+        loadingQuestion: "問題読み込み中...",
+        answerCorrect: "🎉 正解！",
+        answerIncorrect: "❌ 不正解！",
+        loggedOutMsg: "ログアウトしました。"
+      },
+      ko: {
+        title: "🎯 사이버 퀴즈 아레나",
+        subtitle: "풀스택 보안 실습실 • Node.js • Express • SQLite",
+        notLoggedIn: "로그인되지 않음 (게스트 모드)",
+        signedIn: "로그인 계정:",
+        logout: "로그아웃",
+        pts: "점",
+        tabLogin: "로그인",
+        tabRegister: "회원가입",
+        username: "사용자명",
+        usernameRegister: "사용자명 (XSS 테스트 지원)",
+        password: "비밀번호",
+        btnSignIn: "로그인",
+        btnRegister: "계정 생성",
+        sqliTitle: "🧪 SQL 인젝션 페이로드 (POST /api/login)",
+        sqliDesc: "페이로드를 클릭하여 쿼리 문자열 연결 우회를 테스트하세요:",
+        xssTitle: "🦹 저장형 XSS 페이로드 (회원가입 사용자명)",
+        xssDesc: "사용자명에 HTML/JS를 삽입하여 리더보드에서 저장형 XSS를 테스트하세요:",
+        eduTitle: "🛡️ 교육용 보안 실습 가이드",
+        edu1: '<strong style="color: #f1f5f9;">1. SQL 인젝션 (SQLi):</strong> <code>/api/login</code> 은 매개변수화 없이 사용자 입력을 직접 SQL에 연결합니다. <code>\' OR 1=1 --</code> 를 사용하여 로그인을 우회할 수 있습니다.',
+        edu2: '<strong style="color: #f1f5f9;">2. API 정답 유출:</strong> <code>/api/quiz/next</code> 는 사용자가 제출하기 전에 JSON 응답 본문에 정답 <code>answer</code> 를 직접 노출합니다.',
+        edu3: '<strong style="color: #f1f5f9;">3. 파라미터 변조:</strong> <code>/api/quiz/submit</code> 은 클라이언트가 전달한 <code>scoreToAdd</code> 값을 그대로 신뢰하므로 점수를 임의로 조작할 수 있습니다.',
+        edu4: '<strong style="color: #f1f5f9;">4. 저장형 XSS 시연:</strong> HTML/JS 페이로드가 포함된 사용자명이 리더보드 데모 모드에서 렌더링될 때 클라이언트 스크립트가 실행됩니다.',
+        quizTitle: "🧠 퀴즈 도전",
+        btnNext: "다음 문제 ↻",
+        btnSubmit: "정답 제출",
+        inspectTitle: "🔍 요청 검사 및 파라미터 변조",
+        leakedLabel: "서버에서 유출된 정답 (<code>/api/quiz/next</code>):",
+        tamperLabel: "사용자 정의 <code>scoreToAdd</code> (클라이언트 파라미터 변조):",
+        leaderboardTitle: "🏆 실시간 리더보드",
+        btnRefresh: "새로고침",
+        xssDemoMode: "저장형 XSS 데모 모드:",
+        xssSafe: "이스케이프됨 (안전)",
+        xssVulnerable: "취약함 (원시 HTML)",
+        thRank: "#",
+        thPlayer: "플레이어",
+        thScore: "점수",
+        noPlayers: "아직 참가자가 없습니다. 등록하고 1위가 되어보세요!",
+        loadingRankings: "순위 로딩 중...",
+        you: "(나)",
+        loadingQuestion: "보안 문제 로딩 중...",
+        answerCorrect: "🎉 정답입니다!",
+        answerIncorrect: "❌ 오답입니다!",
+        loggedOutMsg: "성공적으로 로그아웃되었습니다."
+      },
+      ru: {
+        title: "🎯 Cyber Quiz Arena",
+        subtitle: "Полнофункциональная лаборатория безопасности • Node.js • Express • SQLite",
+        notLoggedIn: "Не вошли в систему (гость)",
+        signedIn: "Вы вошли как:",
+        logout: "Выйти",
+        pts: "очков",
+        tabLogin: "Вход",
+        tabRegister: "Регистрация",
+        username: "Имя пользователя",
+        usernameRegister: "Имя пользователя (поддерживает XSS)",
+        password: "Пароль",
+        btnSignIn: "Войти",
+        btnRegister: "Создать аккаунт",
+        sqliTitle: "🧪 Нагрузки SQL-инъекций (POST /api/login)",
+        sqliDesc: "Нажмите на нагрузку для проверки обхода конкатенации:",
+        xssTitle: "🦹 Нагрузки хранимой XSS (регистрация)",
+        xssDesc: "Внедрите HTML/JS через имя для проверки хранимой XSS в таблице лидеров:",
+        eduTitle: "🛡️ Руководство по учебной лаборатории",
+        edu1: '<strong style="color: #f1f5f9;">1. SQL-инъекция (SQLi):</strong> <code>/api/login</code> объединяет строки в SQL без параметров. Используйте <code>\' OR 1=1 --</code> для обхода входа.',
+        edu2: '<strong style="color: #f1f5f9;">2. Утечка ответа в API:</strong> <code>/api/quiz/next</code> раскрывает правильный <code>answer</code> в JSON-ответе до отправки.',
+        edu3: '<strong style="color: #f1f5f9;">3. Подмена параметров:</strong> <code>/api/quiz/submit</code> доверяет значению <code>scoreToAdd</code> от клиента, позволяя манипулировать очками.',
+        edu4: '<strong style="color: #f1f5f9;">4. Демо хранимой XSS:</strong> имена с полезной нагрузкой HTML/JS могут выполняться в браузере при отображении таблицы лидеров в демо-режиме.',
+        quizTitle: "🧠 Викторина",
+        btnNext: "След. вопрос ↻",
+        btnSubmit: "Отправить ответ",
+        inspectTitle: "🔍 Инспекция запроса и подмена",
+        leakedLabel: "Утекший ответ сервера (из <code>/api/quiz/next</code>):",
+        tamperLabel: "Произвольный <code>scoreToAdd</code> (подмена на клиенте):",
+        leaderboardTitle: "🏆 Таблица лидеров",
+        btnRefresh: "Обновить",
+        xssDemoMode: "Режим демо хранимой XSS:",
+        xssSafe: "Экранировано (безопасно)",
+        xssVulnerable: "Уязвимо (сырой HTML)",
+        thRank: "#",
+        thPlayer: "Игрок",
+        thScore: "Очки",
+        noPlayers: "Игроков пока нет. Зарегистрируйтесь первым!",
+        loadingRankings: "Загрузка таблицы лидеров...",
+        you: "(Вы)",
+        loadingQuestion: "Загрузка вопроса...",
+        answerCorrect: "🎉 Правильно!",
+        answerIncorrect: "❌ Неправильно!",
+        loggedOutMsg: "Вы успешно вышли из системы."
+      }
+    };
+
+    let currentLang = 'en';
+    let currentAuthMode = 'login';
+    let currentUser = null;
+    let currentQuestion = null;
+    let selectedOption = null;
+
+    // Toast Notification Handler
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      toast.className = `toast ${type}`;
+      toast.innerText = message;
+      toast.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        if (toast.innerText === message) {
+          toast.className = 'toast';
+        }
+      }, 4000);
+    }
+
+    // Change Language
+    function changeLanguage(lang) {
+      if (!i18n[lang]) return;
+      currentLang = lang;
+      localStorage.setItem('quiz_lang', lang);
+      document.getElementById('langSelect').value = lang;
+      applyLanguageUI();
+      fetchNextQuestion();
+      fetchLeaderboard();
+    }
+
+    // Apply translations to UI elements
+    function applyLanguageUI() {
+      const t = i18n[currentLang] || i18n.en;
+      document.getElementById('uiHeaderTitle').innerText = t.title;
+      document.getElementById('uiHeaderSubtitle').innerText = t.subtitle;
+      document.getElementById('tabLogin').innerText = t.tabLogin;
+      document.getElementById('tabRegister').innerText = t.tabRegister;
+      document.getElementById('authPasswordLabel').innerText = t.password;
+      document.getElementById('uiSqliTitle').innerText = t.sqliTitle;
+      document.getElementById('uiSqliDesc').innerText = t.sqliDesc;
+      document.getElementById('uiXssTitle').innerText = t.xssTitle;
+      document.getElementById('uiXssDesc').innerText = t.xssDesc;
+      document.getElementById('uiEduTitle').innerText = t.eduTitle;
+      document.getElementById('uiEdu1').innerHTML = t.edu1;
+      document.getElementById('uiEdu2').innerHTML = t.edu2;
+      document.getElementById('uiEdu3').innerHTML = t.edu3;
+      document.getElementById('uiEdu4').innerHTML = t.edu4;
+      document.getElementById('uiQuizTitle').innerText = t.quizTitle;
+      document.getElementById('uiBtnNext').innerText = t.btnNext;
+      document.getElementById('submitAnswerBtn').innerText = t.btnSubmit;
+      document.getElementById('uiInspectTitle').innerText = t.inspectTitle;
+      document.getElementById('uiLeakedLabel').innerHTML = t.leakedLabel;
+      document.getElementById('uiTamperLabel').innerHTML = t.tamperLabel;
+      document.getElementById('uiLeaderboardTitle').innerText = t.leaderboardTitle;
+      document.getElementById('uiBtnRefresh').innerText = t.btnRefresh;
+      document.getElementById('uiXssDemoMode').innerText = t.xssDemoMode;
+      document.getElementById('uiThRank').innerText = t.thRank;
+      document.getElementById('uiThPlayer').innerText = t.thPlayer;
+      document.getElementById('uiThScore').innerText = t.thScore;
+      document.getElementById('logoutBtn').innerText = t.logout;
+
+      switchAuthTab(currentAuthMode);
+      updateUserUI();
+    }
+
+    // Switch between Sign In and Register tabs
+    function switchAuthTab(mode) {
+      currentAuthMode = mode;
+      const t = i18n[currentLang] || i18n.en;
+      document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+      document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
+      document.getElementById('authSubmitBtn').innerText = mode === 'login' ? t.btnSignIn : t.btnRegister;
+      document.getElementById('sqliHelper').style.display = mode === 'login' ? 'block' : 'none';
+      document.getElementById('xssHelper').style.display = mode === 'register' ? 'block' : 'none';
+      document.getElementById('authUsernameLabel').innerText = mode === 'login' ? t.username : t.usernameRegister;
+    }
+
+    // Load SQLi test payload
+    function applySqliPayload(username, password) {
+      switchAuthTab('login');
+      document.getElementById('authUsername').value = username;
+      document.getElementById('authPassword').value = password;
+      showToast(`Loaded SQLi payload: ${username}`, 'info');
+    }
+
+    // Load Stored XSS test payload
+    function applyXssPayload(payload) {
+      switchAuthTab('register');
+      document.getElementById('authUsername').value = payload;
+      document.getElementById('authPassword').value = 'password123';
+      showToast('Loaded Stored XSS payload into registration form.', 'info');
+    }
+
+    // Handle Authentication Form Submit
+    async function handleAuthSubmit(event) {
+      event.preventDefault();
+      const usernameInput = document.getElementById('authUsername');
+      const passwordInput = document.getElementById('authPassword');
+      const username = usernameInput.value;
+      const password = passwordInput.value;
+
+      const endpoint = currentAuthMode === 'login' ? '/api/login' : '/api/register';
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          showToast(data.message || 'Success!', 'success');
+          if (currentAuthMode === 'register') {
+            switchAuthTab('login');
+            usernameInput.value = username;
+            passwordInput.value = password;
+            await performLogin(username, password);
+          } else {
+            currentUser = data.user;
+            updateUserUI();
+            fetchLeaderboard();
+            passwordInput.value = '';
+          }
+        } else {
+          showToast(data.error || 'Authentication failed.', 'error');
+        }
+      } catch (err) {
+        showToast('Network error: ' + err.message, 'error');
+      }
+    }
+
+    // Seamless login helper
+    async function performLogin(username, password) {
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          currentUser = data.user;
+          updateUserUI();
+          fetchLeaderboard();
+          showToast(`Welcome back, ${currentUser.username}!`, 'success');
+        }
+      } catch (err) {
+        console.error('Auto login failed', err);
+      }
+    }
+
+    // Check active session on load
+    async function checkSession() {
+      try {
+        const res = await fetch('/api/me');
+        const data = await res.json();
+        currentUser = data.user || null;
+        updateUserUI();
+      } catch (e) {
+        console.error('Session check failed', e);
+      }
+    }
+
+    // Update User Profile & Session UI Seamlessly
+    function updateUserUI() {
+      const statusEl = document.getElementById('userStatus');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const t = i18n[currentLang] || i18n.en;
+
+      if (currentUser) {
+        statusEl.innerHTML = `
+          <span>${t.signedIn}</span>
+          <strong>${escapeHtml(currentUser.username)}</strong>
+          <span class="score-badge" id="headerScoreBadge">${currentUser.score} ${t.pts}</span>
+        `;
+        logoutBtn.style.display = 'inline-block';
+      } else {
+        statusEl.innerHTML = `<span>${t.notLoggedIn}</span>`;
+        logoutBtn.style.display = 'none';
+      }
+    }
+
+    // Animate score badge increment
+    function animateScoreBadge() {
+      const badge = document.getElementById('headerScoreBadge');
+      if (badge) {
+        badge.classList.add('score-bump');
+        setTimeout(() => badge.classList.remove('score-bump'), 250);
+      }
+    }
+
+    // Logout Handler
+    async function handleLogout() {
+      const t = i18n[currentLang] || i18n.en;
+      try {
+        await fetch('/api/logout', { method: 'POST' });
+        currentUser = null;
+        updateUserUI();
+        fetchLeaderboard();
+        showToast(t.loggedOutMsg, 'info');
+      } catch (err) {
+        showToast('Logout failed: ' + err.message, 'error');
+      }
+    }
+
+    // Fetch Next Quiz Question (Localized)
+    async function fetchNextQuestion() {
+      selectedOption = null;
+      const t = i18n[currentLang] || i18n.en;
+      document.getElementById('submitAnswerBtn').disabled = true;
+      document.getElementById('questionText').innerText = t.loadingQuestion;
+      document.getElementById('optionsContainer').innerHTML = '';
+      document.getElementById('leakedAnswer').innerText = '...';
+
+      try {
+        const res = await fetch(`/api/quiz/next?lang=${encodeURIComponent(currentLang)}`);
+        const data = await res.json();
+        currentQuestion = data;
+
+        document.getElementById('questionText').innerText = `${data.id}. ${data.question}`;
+        document.getElementById('leakedAnswer').innerText = `Answer: "${data.answer}"`;
+
+        const container = document.getElementById('optionsContainer');
+        const labels = ['A', 'B', 'C', 'D'];
+
+        data.options.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerHTML = `<span class="option-label">${labels[idx] || (idx + 1)}</span><span>${escapeHtml(opt)}</span>`;
+          btn.onclick = () => selectOption(opt, btn);
+          container.appendChild(btn);
+        });
+      } catch (err) {
+        document.getElementById('questionText').innerText = 'Failed to load question.';
+        showToast('Could not load quiz question: ' + err.message, 'error');
+      }
+    }
+
+    // Select Quiz Option
+    function selectOption(option, buttonEl) {
+      selectedOption = option;
+      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+      buttonEl.classList.add('selected');
+      document.getElementById('submitAnswerBtn').disabled = false;
+    }
+
+    // Submit Selected Answer & Score
+    async function submitSelectedAnswer() {
+      if (!selectedOption || !currentQuestion) return;
+
+      const isCorrect = (selectedOption === currentQuestion.answer);
+      const customScoreInput = document.getElementById('customScore');
+      const scoreToAdd = parseInt(customScoreInput.value, 10) || 0;
+      const t = i18n[currentLang] || i18n.en;
+
+      // Highlight options with interactive animations
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.disabled = true;
+        const text = btn.querySelector('span:last-child').innerText;
+        if (text === currentQuestion.answer) {
+          btn.classList.add('correct');
+        } else if (text === selectedOption && !isCorrect) {
+          btn.classList.add('incorrect');
+        }
+      });
+      document.getElementById('submitAnswerBtn').disabled = true;
+
+      if (!currentUser) {
+        showToast(`${isCorrect ? t.answerCorrect : t.answerIncorrect} Please sign in to record scores!`, isCorrect ? 'success' : 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/quiz/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            scoreToAdd: scoreToAdd,
+            username: currentUser.username
+          })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          showToast(`${isCorrect ? t.answerCorrect : t.answerIncorrect} +${data.scoreAdded} ${t.pts}`, isCorrect ? 'success' : 'info');
+          if (data.user) {
+            currentUser.score = data.user.score;
+            updateUserUI();
+            animateScoreBadge();
+          }
+          fetchLeaderboard();
+        } else {
+          showToast(data.error || 'Failed to submit score.', 'error');
+        }
+      } catch (err) {
+        showToast('Error submitting score: ' + err.message, 'error');
+      }
+    }
+
+    // Custom score tamper helper
+    function tamperScore(val) {
+      document.getElementById('customScore').value = val;
+      showToast(`Set scoreToAdd = ${val}`, 'info');
+    }
+
+    // Fetch and render Leaderboard
+    async function fetchLeaderboard() {
+      const tbody = document.getElementById('leaderboardBody');
+      const xssToggle = document.getElementById('xssToggle');
+      const xssModeLabel = document.getElementById('xssModeLabel');
+      const t = i18n[currentLang] || i18n.en;
+
+      const isXssMode = xssToggle && xssToggle.checked;
+      if (xssModeLabel) {
+        if (isXssMode) {
+          xssModeLabel.innerText = t.xssVulnerable;
+          xssModeLabel.style.color = '#ef4444';
+        } else {
+          xssModeLabel.innerText = t.xssSafe;
+          xssModeLabel.style.color = '#10b981';
+        }
+      }
+
+      try {
+        const res = await fetch('/api/leaderboard');
+        const data = await res.json();
+        const list = data.leaderboard || [];
+
+        if (list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">${t.noPlayers}</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = list.map((user, idx) => {
+          let rankMedal = `#${idx + 1}`;
+          if (idx === 0) rankMedal = '🥇';
+          else if (idx === 1) rankMedal = '🥈';
+          else if (idx === 2) rankMedal = '🥉';
+
+          const isCurrent = currentUser && currentUser.username === user.username;
+          const highlightStyle = isCurrent ? 'style="background: rgba(99, 102, 241, 0.2);"' : '';
+
+          const renderedUsername = isXssMode ? user.username : escapeHtml(user.username);
+
+          return `
+            <tr ${highlightStyle}>
+              <td class="rank-col">${rankMedal}</td>
+              <td>${renderedUsername} ${isCurrent ? `<small style="color: #818cf8; font-weight: bold; margin-left: 4px;">${t.you}</small>` : ''}</td>
+              <td class="score-col">${user.score}</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--danger); padding: 1rem;">Failed to load leaderboard.</td></tr>`;
+      }
+    }
+
+    // HTML Entity escaping helper
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Initialize application
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('quiz_lang');
+      if (savedLang && i18n[savedLang]) {
+        currentLang = savedLang;
+        document.getElementById('langSelect').value = savedLang;
+      }
+      applyLanguageUI();
+      checkSession();
+      fetchNextQuestion();
+      fetchLeaderboard();
+    });
+  </script>
+</body>
+</html>
